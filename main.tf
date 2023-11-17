@@ -37,7 +37,7 @@ resource "aws_lb" "main" {
   )
 }
 
-# we need this listener only for private load balancer we are making a condition
+# we need this listener only for private load balancer  for backend components we are making a condition
 resource "aws_lb_listener" "backend" {
   count             = var.internal ? 1 : 0
   load_balancer_arn = aws_lb.main.arn
