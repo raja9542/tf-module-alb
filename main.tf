@@ -10,6 +10,13 @@ resource "aws_security_group" "main" {
     protocol         = "tcp"
     cidr_blocks      = var.allow_cidr // to allow app cidr block
   }
+  ingress {
+    description      = "HTTPS"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = var.allow_cidr // to allow app cidr block
+  }
 
   egress {
     from_port        = 0
@@ -53,4 +60,13 @@ resource "aws_lb_listener" "backend" {
       status_code  = "200"
     }
   }
+}
+# DNS record for public load balancer
+resource "aws_route53_record" "public_lb" {
+  count   = var.internal ? 0 : 1
+  zone_id = "Z09171912J6RDBH9U9MN3"
+  name    = var.dns_domain
+  type    = "CNAME"
+  ttl     = 30
+  records = [aws_lb.main.dns_name]
 }
